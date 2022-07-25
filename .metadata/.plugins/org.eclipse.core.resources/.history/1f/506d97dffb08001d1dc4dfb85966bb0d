@@ -1,0 +1,35 @@
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+public class Program {
+	public static void main(String[] args) throws Exception {
+		Locale.setDefault(Locale.US);
+		// conexão HTTP e buscar os top 250 filmes
+		String url = "https://raw.githubusercontent.com/alura-cursos/imersao-java/api/NASA-APOD-JamesWebbSpaceTelescope.json";
+		
+		var http = new ClienteHttp();
+		String json = http.buscaDados(url);
+		
+		ExtratorDeConteudoNasa extrator = new ExtratorDeConteudoNasa();
+		List<Conteudo> conteudos = extrator.extraiConteudos(json);
+		
+		var geradora = new GeradorDeFigurinhas();
+		
+		for (Map<String,String> conteudo : listaDeConteudos) {
+			
+			String urlImagem = conteudo.get("hdurl").replaceAll("(@+)(.*).jpg$", "$1.jpg");
+			String titulo = conteudo.get("title");
+			InputStream inputStream = new URL(urlImagem).openStream();
+			String nomeArquivo = "saida/" + titulo + ".png";
+			
+			geradora.cria(inputStream, nomeArquivo);
+			
+			System.out.println(conteudo.get("title"));
+			System.out.println(conteudo.get("hdurl"));
+			System.out.println();
+		}
+	}
+}
